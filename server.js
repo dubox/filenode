@@ -12,16 +12,17 @@ server.on('request', function(request, response) {
     var filename = null;
     // 解析请求的URL
     var url = require('url').parse(request.url);
+	log(request.headers);
     switch(url.pathname) {
     case '/upload':
-        var _fileName = request.headers['file-name'];
+        var _fileName = '/upload/'+request.headers['file-name'];
         log(_fileName);
         request.once('data', function(data) {
             // 大文件
-//            var fis = fs.createWriteStream('/txt.txt');
-//            fis.write(data);
-//            fis.end();
-            fs.writeFile(_fileName, data);
+            var fis = fs.createWriteStream(_fileName);
+            fis.write(data);
+            fis.end();
+            //fs.writeFile(_fileName, data);
             response.end();
         });
         break;
