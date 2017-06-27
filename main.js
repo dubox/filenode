@@ -1,5 +1,7 @@
 var fs = require('fs');
 var http = require('http'); 
+const Url  = require('url').Url;
+//console.log(URL);
 
 fs.watch('./test', { encoding: 'utf8',recursive :true }, (eventType, filename) => {
   //if (filename)
@@ -8,6 +10,9 @@ fs.watch('./test', { encoding: 'utf8',recursive :true }, (eventType, filename) =
 	
     console.log('eventType:'+eventType);
 });
+
+
+
 
 
 
@@ -22,6 +27,7 @@ fs.readFile('test/s.txt', function(err, content) {
             } else { // 否则读取文件成功
                  // 把文件内容作为响应主体
 				 
+				console.log('请求成功');
 				 
 				 const options = {
 					  hostname: '127.0.0.1',

@@ -19,11 +19,13 @@ server.on('request', function(request, response) {
         log(_fileName);
         request.once('data', function(data) {
             // ´óÎÄ¼þ
-            var fis = fs.createWriteStream(_fileName);
+			var _fd = fs.openSync(_fileName,'wx');
+            var fis = fs.createWriteStream(_fileName,{fd:_fd});
             fis.write(data);
             fis.end();
             //fs.writeFile(_fileName, data);
             response.end();
+			fs.closeSync(_fd);
         });
         break;
     case '/' || '/index.html' :
