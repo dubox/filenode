@@ -15,19 +15,31 @@ server.on('request', function(request, response) {
 	log(request.headers);
     switch(url.pathname) {
     case '/upload':
-        var _fileName = '/upload/'+request.headers['file-name'];
+        var _fileName = './upload/'+request.headers['file-name'];
         log(_fileName);
-        request.once('data', function(data) {
-            // ´óÎÄ¼þ
-			var _fd = fs.openSync(_fileName,'wx');
-            var fis = fs.createWriteStream(_fileName,{fd:_fd});
-            fis.write(data);
-            fis.end();
-            //fs.writeFile(_fileName, data);
-            response.end();
-			fs.closeSync(_fd);
-        });
-        break;
+		try{
+			var _fd = fs.openSync(_fileName,'wx');log(_fd);
+			var fis = fs.createWriteStream(_fileName,{fd:_fd});
+			request.pipe(fis);
+			
+			request.on('end',() => {
+				log('request.end');
+				fs.closeSync(_fd);
+				response.end();
+			})
+			
+			
+			response.writeHead(200, {'Content-type' : 'text/plain; charset=UTF-8'});
+                response.write('ok');
+		}catch(e){
+			response.writeHead(500, {'Content-type' : 'text/plain; charset=UTF-8'});
+			response.write(e.toString());
+			response.end();
+		}
+		
+		break;
+		
+        
     case '/' || '/index.html' :
         filename = 'index.html';
     default:

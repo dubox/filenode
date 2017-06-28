@@ -11,58 +11,58 @@ fs.watch('./test', { encoding: 'utf8',recursive :true }, (eventType, filename) =
     console.log('eventType:'+eventType);
 });
 
+var _fileName = 'YoudaoDict.exe';
+
+
+//创建请求
+ const options = {
+	  hostname: '127.0.0.1',
+	  port: 8000,
+	  path: '/upload',
+	  method: 'POST',
+	  headers: {
+		'Content-Type': 'application/x-www-form-urlencoded',
+		'file-name':_fileName
+		//'Content-Length': Buffer.byteLength(content)
+	  }
+	};
+
+const req = http.request(options, (res) => {
+	  console.log(`状态码: ${res.statusCode}`);
+	  console.log(`响应头: ${JSON.stringify(res.headers)}`);
+	  res.setEncoding('utf8');
+	  res.on('data', (chunk) => {
+		console.log(`响应主体: ${chunk}`);
+	  });
+	  res.on('end', () => {
+		console.log('响应中已无数据。');
+	  });
+	});
+
+	req.on('error', (e) => {
+	  console.error(`请求遇到问题: ${e.message}`);
+	});
+
+ 
+//创建文件流
+
+try{
+	
+	var fis = fs.createReadStream('./test/'+_fileName);
+	fis.pipe(req);
+	
+	fis.on('end',() => {
+		log('fis.end');
+		req.end();
+	})
+	
+}catch(e){
+	req.end();
+}
 
 
 
-
-
-
-// 写入数据到请求主体
-
-
-
-fs.readFile('test/s.txt', function(err, content) {
-            if (err) { // 如果由于某些原因无法读取文件
-                console.log(err.message);
-            } else { // 否则读取文件成功
-                 // 把文件内容作为响应主体
-				 
-				console.log('请求成功');
-				 
-				 const options = {
-					  hostname: '127.0.0.1',
-					  port: 8000,
-					  path: '/upload',
-					  method: 'POST',
-					  headers: {
-						'Content-Type': 'application/x-www-form-urlencoded',
-						'file-name':'s.txt',
-						'Content-Length': Buffer.byteLength(content)
-					  }
-					};
-
-					const req = http.request(options, (res) => {
-					  console.log(`状态码: ${res.statusCode}`);
-					  console.log(`响应头: ${JSON.stringify(res.headers)}`);
-					  res.setEncoding('utf8');
-					  res.on('data', (chunk) => {
-						console.log(`响应主体: ${chunk}`);
-					  });
-					  res.on('end', () => {
-						console.log('响应中已无数据。');
-					  });
-					});
-
-					req.on('error', (e) => {
-					  console.error(`请求遇到问题: ${e.message}`);
-					});
-
-				 
-				req.write(content);
-				 req.end();
-            }
-           
-        });
-
-
+function log(s){
+	console.log(s);
+}
 
